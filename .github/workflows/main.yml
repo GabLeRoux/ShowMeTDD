@@ -6,6 +6,8 @@ on:
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_VERSION: 2018.3.9f1
+  PROJECT_PATH: .
 
 jobs:
   checklicense:
@@ -31,7 +33,7 @@ jobs:
         id: getManualLicenseFile
         uses: webbertakken/unity-request-manual-activation-file@master
         with:
-          unityVersion: 2018.3.9f1
+          unityVersion: ${{ env.UNITY_VERSION }}
       # Upload artifact (Unity_v20XX.X.XXXX.alf)
       - name: Expose as artifact
         uses: actions/upload-artifact@v1
@@ -58,7 +60,7 @@ jobs:
       - uses: webbertakken/unity-test-runner@v1.7
         id: testRunner
         with:
-          projectPath: .
+          projectPath: ${{ env.UNITY_VERSION }}
           testMode: all
       - uses: actions/upload-artifact@v1
         with:
@@ -73,10 +75,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        projectPath:
-          - .
-        unityVersion:
-          - 2018.3.9f1
         targetPlatform:
           - StandaloneOSX
           - StandaloneWindows64
@@ -95,8 +93,8 @@ jobs:
             Library-
       - uses: webbertakken/unity-builder@v1.4
         with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
+          projectPath: ${{ env.PROJECT_PATH }}
+          unityVersion: ${{ env.UNITY_VERSION }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: "-nographics"
       - uses: actions/upload-artifact@v1

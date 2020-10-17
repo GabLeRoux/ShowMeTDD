@@ -19,14 +19,8 @@ jobs:
             echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
             echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
 
-  debug:
-    name: debug
-    runs-on: ubuntu-latest
-    steps:
-      - name: debug
-        run: echo ${{ needs.checklicense.outputs.is_unity_license_set }}
-
   activation:
+    needs: [checklicense]
     if: needs.checklicense.outputs.is_unity_license_set == 'false'
     name: Request activation file 🔑
     runs-on: ubuntu-latest
@@ -45,6 +39,7 @@ jobs:
           path: ${{ steps.getManualLicenseFile.outputs.filePath }}
 
   test:
+    needs: [checklicense]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     name: Test all modes ✨
     runs-on: ubuntu-latest
@@ -70,6 +65,7 @@ jobs:
           path: ${{ steps.testRunner.outputs.artifactsPath }}
 
   build:
+    needs: [checklicense]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest

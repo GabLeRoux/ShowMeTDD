@@ -18,7 +18,7 @@ jobs:
             echo "::set-output name=is_unity_license_secret_set::${{ env.UNITY_LICENSE != '' }}"
     
   activation:
-    if: needs.build.outputs.is_unity_license_secret_set == 'true'
+    if: needs.build.outputs.is_unity_license_secret_set == 'false'
     name: Request activation file 🔑
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,7 @@ jobs:
           path: ${{ steps.getManualLicenseFile.outputs.filePath }}
 
   test:
-    if: needs.build.outputs.is_unity_license_secret_set == 'false'
+    if: needs.build.outputs.is_unity_license_secret_set == 'true'
     name: Test all modes ✨
     runs-on: ubuntu-latest
     steps:
@@ -61,7 +61,7 @@ jobs:
           path: ${{ steps.testRunner.outputs.artifactsPath }}
 
   build:
-    if: needs.build.outputs.is_unity_license_secret_set == 'false'
+    if: needs.build.outputs.is_unity_license_secret_set == 'true'
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
     strategy:

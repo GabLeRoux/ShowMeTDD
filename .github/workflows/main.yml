@@ -8,20 +8,16 @@ jobs:
   checklicense:
     name: check if UNITY_LICENSE is set in github secrets
     runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.checklicense_job.outputs.is_unity_license_secret_set }}
     steps:
       - name: Check whether unity activation requests should be done
+        id: checklicense_job
         env:
             UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         run: |
             echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
             echo "::set-output name=is_unity_license_secret_set::${{ env.UNITY_LICENSE != '' }}"
-  
-  testchecklicense:
-    name: testchecklicense
-    runs-on: ubuntu-latest
-    steps:
-      - name: testchecklicense
-        run: echo ${{ needs.checklicense.outputs.is_unity_license_secret_set }}
 
   activation:
     if: needs.checklicense.outputs.is_unity_license_secret_set == 'false'

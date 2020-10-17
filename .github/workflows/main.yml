@@ -19,6 +19,13 @@ jobs:
             echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
             echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
 
+  debug:
+    name: debug
+    runs-on: ubuntu-latest
+    steps:
+      - name: debug
+        run: echo ${{ needs.checklicense.outputs.is_unity_license_set }}
+
   activation:
     if: needs.checklicense.outputs.is_unity_license_set == 'false'
     name: Request activation file 🔑

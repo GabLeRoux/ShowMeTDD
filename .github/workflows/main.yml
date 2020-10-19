@@ -21,7 +21,6 @@ jobs:
         run: |
             echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
             echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
-
   activation:
     needs: [checklicense]
     if: needs.checklicense.outputs.is_unity_license_set == 'false'
@@ -60,8 +59,10 @@ jobs:
       - uses: webbertakken/unity-test-runner@v1.7
         id: testRunner
         with:
-          projectPath: ${{ env.UNITY_VERSION }}
+          projectPath: ${{ env.PROJECT_PATH }}
+          unityVersion: ${{ env.UNITY_VERSION }}
           testMode: all
+          customParameters: "-nographics"
       - uses: actions/upload-artifact@v1
         with:
           name: Test results (all modes)
@@ -101,3 +102,4 @@ jobs:
         with:
           name: Build
           path: build
+
